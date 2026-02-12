@@ -1,3 +1,32 @@
+# Completed
+- Chaos
+- Backend
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # DevSoc 2026 Subcommittee Recruitment Technical Assessment
 
 Hiya!
