@@ -32,7 +32,45 @@ Write SQL (Postgres) `CREATE` statements to create the following schema. Be sure
 
 **Answer box:**
 ```sql
--- Create tables here
+-- My interpretation of the diagram:
+-- 1a. If a playlist is deleted, all playlist_songs referencing the playlist are deleted
+-- 1b.Likewise, if a user is deleted, all their playlists are also deleted
+-- 1c. Or if a song is deleted, all rows in playlist songs containing that song id are deleted
+-- 2. The line linking user_id indicates that playlists.user_id is nullable, while the other two links are mandatory
+-- 3a. A wrench indicates a key to be primary
+-- 3b. A chainlink indicates a key to be foreign
+
+
+-- Arguably IDs should be BIGINTs but that wasn't specified in the schema, so I
+-- stuck to using standard INTEGERs
+CREATE Users (
+  id INTEGER PRIMARY KEY
+);
+
+CREATE songs (
+  id INTEGER PRIMARY KEY,
+  title TEXT,
+  artist TEXT,
+  duration INTERVAL -- my syntax highlighting isn't working here, but PostgreSQL documents this as being a valid type
+)
+
+CREATE playlists (
+  id INTEGER PRIMARY KEY,
+  user_id INTEGER -- nullable, since there is a circle
+    REFERENCES Users(id),
+    ON DELETE SET NULL-- nulling since a playlist can comfortably exist without a creator
+  name TEXT
+)
+
+CREATE playlist_songs (
+  playlist_id INTEGER
+    REFERENCES playlists(id)
+    ON DELETE CASCADE,
+  song_id INTEGER
+    REFERENCES songs(id)
+    ON DELETE CASCADE,
+  PRIMARY KEY (playlist_id, song_id)
+)
 ```
 
 ### b)
@@ -47,5 +85,7 @@ Using the above schema, write an SQL `SELECT` query to return all songs in a pla
 
 **Answer box:**
 ```sql
--- Write query here
+SELECT songs_id as id, playlist_id, title artist, duration 
+FROM playlist_songs ps JOIN songs s ON ps.song_id = s.id
+WHERE playlist_id = 676767
 ```
